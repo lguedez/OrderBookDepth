@@ -22,6 +22,7 @@ class Exchange():
         self.orderbook = {}
         self.updates = 0
         self.tiempo = tiempo
+        self.simbolos = simbolos
 #--------------------- Metodos ----------------------------------------
         # catch errors
     def on_error(self, error):
@@ -34,13 +35,14 @@ class Exchange():
     # run when websocket is initialised
     def on_open(self):
         print('Connected to Binance\n')
+        self.get_snapshot()
 
         # retrieve orderbook snapshot
     def get_snapshot(self):
         #3. Get a depth snapshot from https://api.binance.com/api/v3/depth?symbol=ParMonedas&limit=1000
-        r = requests.get("https://api.binance.com/api/v3/depth?symbol="+simbolos.upper()+"&limit=5000")
+        r = requests.get("https://api.binance.com/api/v3/depth?symbol="+simbolos.upper()+"&limit=1000")
         depthsnapshot = r.json()
-        #print(depthsnapshot)
+        self.orderbook = depthsnapshot
         return depthsnapshot
 
         # convert message to dict, process update
@@ -105,7 +107,7 @@ class Exchange():
                     break
             # if the price level is not in the orderbook, 
             # insert price level, filter for qty 0
-            elif price > float (self.orderbook[side][x][0]):
+            elif price != float (self.orderbook[side][x][0]):
                 if qty != 0:
                     self.orderbook[side].insert(x, update)
                     print(f'New price: {side} {price} {qty}')
@@ -120,8 +122,8 @@ def difPct(bid, ask , pr):
 
 #--------------------- Aqui comienza el programa principal ----------------------------------------
 if __name__ == "__main__":
-    simbolos="LINKUSDT"
-    tiempo=36 # tiempo en segundos
+    simbolos="BTCUSDT"
+    tiempo=369 # tiempo en segundos
     cliente=Exchange(simbolos,tiempo)# creo el objeto
     cliente.on_open()
     cliente.on_message()
@@ -129,15 +131,18 @@ if __name__ == "__main__":
 
     client = binance.Client()
     order_book = cliente.orderbook   
-    
+    #esta lo nuevo de esta version 2
     bids = pd.DataFrame(order_book['bids'])
     asks = pd.DataFrame(order_book['asks'])
+
     #print(bids.info())
     #Convierto en numeros precio y cantidad
-    bids[0] = pd.to_numeric(bids[0])
+    
     bids[1] = pd.to_numeric(bids[1])
-    asks[0] = pd.to_numeric(asks[0])
+    bids[0] = pd.to_numeric(bids[0])
     asks[1] = pd.to_numeric(asks[1])
+    asks[0] = pd.to_numeric(asks[0])
+
     #-----------precios-------------------
     ask_Pminimo = min(asks.iloc[:,0])
     ask_Pmaximo = max(asks.iloc[:,0])
@@ -146,20 +151,23 @@ if __name__ == "__main__":
 
     ask_min = ask_Pminimo
     bid_max = bid_Pmaximo
-    p_b = bids[0]
-    p_a = asks[0]
     q_b = bids[1]
     q_a = asks[1]
+    p_b = bids[0]
+    p_a = asks[0]
+
 
     #Ordeno de forma decendente por cantidad
+    bids = bids.groupby([0]).mean([1])
+    asks = asks.groupby([0]).mean([1])
     bids.sort_values(by=1, ascending=False, inplace=True)
     asks.sort_values(by=1, ascending=False, inplace=True)
     print('\nOrdenados Por Cantidad')
-    print('\nTop 10 valores de Venta Asks\n')
-    asks10=asks.head(10)
+    print('\nTop 20 valores de Venta Asks\n')
+    asks10=asks.head(20)
     print(asks10)
-    print('\nTop 10 valores de Compra Bids')
-    bids10=bids.head(10)
+    print('\nTop 20 valores de Compra Bids')
+    bids10=bids.head(20)
     print(bids10)
     print('\nOrdenados Por Precio\n')
     print('\nTop 10 Precios valores de Venta Asks')
@@ -198,3 +206,4 @@ if __name__ == "__main__":
     dif_pct = difPct(bid_max, ask_min, price)
     print( f'\n price {price} \n Diferencia : {ask_min- bid_max} \n Diferencia PCT: {dif_pct} ' ) 
     print('Finalizo programa\n')
+

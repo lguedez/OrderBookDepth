@@ -1,6 +1,6 @@
 # OrderBookDepth
 Order Book Depth Binance Libro de Ordenes de Binance
-El siguiente Codigo devuelve un libro ordenes de Binance y Adicionalmete te indica los 10 puntos de mayor venta y compra.
+El siguiente Codigo devuelve un libro ordenes de Binance y Adicionalmete te indica los 20 puntos de mayor venta y compra.
 como entradas se le debe dar el par de monedas ejemplo: BTCUSDT y el tiempo que se realizara el muestreo en segundos.
 al final crea un archivo en la carpeta C:\Leo llamado leo.json que lo utilizo para analizar la data en excel. Si consigo varias estrellas compartire el excel.
 

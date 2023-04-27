@@ -115,15 +115,10 @@ class Exchange():
                 else:
                     break
 
-
-def difPct(bid, ask , pr):
-    return ((ask - bid )/(pr/100))
-# function to add value labels
-
 #--------------------- Aqui comienza el programa principal ----------------------------------------
 if __name__ == "__main__":
-    simbolos="BTCUSDT"
-    tiempo=369 # tiempo en segundos
+    simbolos="ETHUSDT"
+    tiempo=69 # tiempo en segundos
     cliente=Exchange(simbolos,tiempo)# creo el objeto
     cliente.on_open()
     cliente.on_message()
@@ -131,7 +126,6 @@ if __name__ == "__main__":
 
     client = binance.Client()
     order_book = cliente.orderbook   
-    #esta lo nuevo de esta version 2
     bids = pd.DataFrame(order_book['bids'])
     asks = pd.DataFrame(order_book['asks'])
 
@@ -175,20 +169,7 @@ if __name__ == "__main__":
     print('\nTop 10 Precios valores de Compra Bids')
     print(bids10.sort_values(by=0, ascending=False, inplace=False))
 
-    # -----------------Grafica 1------------------------------------------------
-    fig, ax = plt.subplots(2, figsize = (13,10))
-    ax[0].bar(p_a,q_a,color="r")
-    ax[1].bar(p_b,q_b,color="g")
-    ax[0].set_title('Libro Ordenes')
-    ax[0].set_ylabel('Cantidad qty')
-    ax[0].set_xlabel('Precio Venta Asks')
-    ax[1].set_ylabel('Cantidad qty')
-    ax[1].set_xlabel('Precio Compra Bids')
-    # -----------------Grafica 2------------------------------------------------
-    #fig, ax2 = plt.subplots(2, figsize = (5,10))
-    #ax2[0].hlines(AcumularAsks,xmin=float (ask_Pminimo), xmax = float (ask_Pmaximo), color = "r")
-    #ax2[1].hlines(AcumularBids,xmin=float (bid_Pminimo), xmax = float (bid_Pmaximo), color = "g")
-    #ax2[0].set_title('Puntos mas relevantes libro ordenes')
+   
     
     # Abrir un archivo JSON
     json_file = open("C:\leo\leo.json", "w")
@@ -200,10 +181,8 @@ if __name__ == "__main__":
     json_file.write(json_string)
     # Cerrar el archivo
     json_file.close()
-    plt.show()
+    
     price_now = client.futures_mark_price(symbol =  simbolos )
     price = float(price_now['markPrice'])
-    dif_pct = difPct(bid_max, ask_min, price)
-    print( f'\n price {price} \n Diferencia : {ask_min- bid_max} \n Diferencia PCT: {dif_pct} ' ) 
     print('Finalizo programa\n')
 

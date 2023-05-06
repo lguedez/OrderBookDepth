@@ -4,6 +4,16 @@ El siguiente Codigo devuelve un libro ordenes de Binance y Adicionalmete te indi
 como entradas se le debe dar el par de monedas ejemplo: BTCUSDT y el tiempo que se realizara el muestreo en segundos.
 al final crea un archivo en la carpeta C:\Leo llamado leo.json que lo utilizo para analizar la data en excel. Si consigo varias estrellas compartire el excel.
 
+ Entradas:
+1) linea 120 simbolos="ETHUSDT".
+2) linea 121 tiempo=69 # tiempo en segundos para establecer la profundidad del libro de ordenes.
+ 
+ Salidas:
+1) 20 Ordenes de venta y compra ordenadas por precio.
+2) 20 Ordenes de venta y compra ordenadas por Cantidad.
+3) Archivo Leo.JSON (Crear la carpeta C:\leo\ o cambiar a la rura deseada linea 175)
+
+
 El programa toma en cuenta lo indicado en la referencia de Binance https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly
 
 "How to manage a local order book correctly:
